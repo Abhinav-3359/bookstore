@@ -1,0 +1,42 @@
+Creating images
+BACKEND (in the backend folder run):
+docker build -t backend .
+
+FRONTEND (in the client folder run):
+docker build -t frontend .
+
+Mysql:
+docker pull mysql
+
+Volumes:
+docker volume create db
+
+Networks:
+docker network create net1
+
+Creating and running containers:
+mysql:
+docker run -d --name mysql-db --network net1 -e MYSQL_ROOT_PASSWORD=123 -e MYSQL_DATABASE=test -v db:/var/lib/mysql -p 3306:3306 mysql
+
+Creating initial table in mysql:
+docker exec -it mysql-db mysql -u root -p
+
+CREATE TABLE books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    `desc` TEXT,
+    price INT NOT NULL,
+    cover VARCHAR(255)
+);
+
+INSERT INTO books (id, title, `desc`, price, cover) 
+VALUES 
+(1, 'Book Title 1', 'Description of Book 1', 1999, 'book1.jpg'),
+(2, 'Book Title 2', 'Description of Book 2', 2499, 'book2.jpg'),
+(3, 'Book Title 3', 'Description of Book 3', 1499, 'book3.jpg');
+
+frontend:
+docker run -d --name react --network net1 -p 3000:3000 frontend
+
+backend:
+docker run -d --name node --network net1 -p 8800:8800 backend
